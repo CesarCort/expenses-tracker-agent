@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+
+# Cache
+cache/
+
+# evaluation
+*.evalset.json
+
+# Macos
+.DS_Store
+
+secrets/
