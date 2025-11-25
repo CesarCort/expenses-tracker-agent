@@ -15,10 +15,12 @@ def get_client():
     ]
     base_path = os.path.dirname(__file__)
     creds_path = os.path.join(base_path, "../secrets/creds.json")
-    creds = Credentials.from_service_account_file(
-        creds_path,
-        scopes=SCOPES,
-    )
+    json_creds = os.getenv("GOOGLE_CREDENTIALS_JSON")
+    
+    if json_creds:
+        creds = Credentials.from_service_account_info(json_creds, scopes=SCOPES)
+    else:
+        creds = Credentials.from_service_account_file(creds_path, scopes=SCOPES)
     client = gspread.authorize(creds)
     return client
 
