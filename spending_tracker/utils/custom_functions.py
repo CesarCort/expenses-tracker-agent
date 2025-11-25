@@ -1,6 +1,7 @@
 import gspread
 import os
 import toml
+import json
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 from collections import defaultdict
@@ -15,8 +16,8 @@ def get_client():
     ]
     base_path = os.path.dirname(__file__)
     creds_path = os.path.join(base_path, "../secrets/creds.json")
-    json_creds = os.getenv("GOOGLE_CREDENTIALS_JSON")
-    
+    json_creds = json.loads(os.getenv("GOOGLE_CREDENTIALS_JSON"))
+
     if json_creds:
         creds = Credentials.from_service_account_info(json_creds, scopes=SCOPES)
     else:

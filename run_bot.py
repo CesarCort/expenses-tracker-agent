@@ -10,6 +10,7 @@ import base64
 import os
 import re
 from spending_tracker.agent import root_agent
+from google.adk.plugins import ReflectAndRetryToolPlugin
 
 # Configuración de logs
 logging.basicConfig(
@@ -19,7 +20,7 @@ logging.basicConfig(
 load_dotenv("./spending_tracker/.env")
 # Crear el runner una vez (singleton)
 APP_NAME = "agents"
-runner = InMemoryRunner(agent=root_agent, app_name=APP_NAME)
+runner = InMemoryRunner(agent=root_agent, app_name=APP_NAME, plugins=[ReflectAndRetryToolPlugin(max_retries=3)])
 
 # Diccionario para mantener sesiones por usuario
 user_sessions: dict[int, str] = {}
@@ -88,12 +89,14 @@ async def run_agent_and_reply(update: Update, content: types.Content):
             session_id=session_id,
             new_message=content
         ):
+            print(f"Event: {event}")
             await update.message.chat.send_action(ChatAction.TYPING)
             if event.is_final_response():
                 if event.content and event.content.parts:
                     final_response = event.content.parts[0].text
-        
+
         if final_response:
+            print(f"Final response: {final_response}")
             formatted_text = markdown_to_telegram_html(final_response)
             await update.message.reply_text(formatted_text, parse_mode="HTML")
         else:
